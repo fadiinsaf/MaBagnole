@@ -534,24 +534,24 @@
     </div>
 
     <script>
-        // Global variables
+
         let carFormCount = 1;
 
-        // Open modal function
+
         function openAddCarModal() {
             const modal = document.getElementById('addCarModal');
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
 
-        // Close modal function
+
         function closeModal() {
             const modal = document.getElementById('addCarModal');
             modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
 
-        // Add another car form
+
         function addAnotherCar() {
             carFormCount++;
             const container = document.getElementById('carFormsContainer');
@@ -631,23 +631,23 @@
 
             container.appendChild(newForm);
 
-            // Scroll to the new form
+
             newForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        // Remove car form - but not the first one
+
         function removeCarForm(button) {
             const form = button.closest('.car-form');
             const allForms = document.querySelectorAll('.car-form');
 
-            // Don't allow removing if there's only one form
+
             if (form && allForms.length > 1) {
                 form.remove();
                 updateCarNumbers();
             }
         }
 
-        // Update car numbers after removal
+
         function updateCarNumbers() {
             const forms = document.querySelectorAll('.car-form');
             forms.forEach((form, index) => {
@@ -659,7 +659,7 @@
             carFormCount = forms.length;
         }
 
-        // Handle form submission
+
         document.getElementById('carForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -671,7 +671,7 @@
             const descriptions = formData.getAll('description[]');
             const categories = formData.getAll('id_category[]');
 
-            // Process each car
+
             for (let i = 0; i < brands.length; i++) {
                 const carData = {
                     brand: brands[i],
@@ -682,10 +682,10 @@
                     id_category: categories[i]
                 };
 
-                // Here you would normally send this data to your backend
+
                 console.log('Car data to save:', carData);
 
-                // You would typically make an AJAX request here:
+
                 /*
                 fetch('/api/cars', {
                     method: 'POST',
@@ -704,14 +704,14 @@
                 */
             }
 
-            // Show success message
+
             alert(`Successfully added ${brands.length} car(s) to the system!`);
 
-            // Reset form and close modal
+
             this.reset();
             closeModal();
 
-            // Reset to one form
+
             const container = document.getElementById('carFormsContainer');
             const forms = container.querySelectorAll('.car-form');
             for (let i = 1; i < forms.length; i++) {
@@ -720,14 +720,14 @@
             carFormCount = 1;
         });
 
-        // Add event listener to the "Add New Car" button in the header
+
         document.addEventListener('DOMContentLoaded', function () {
             const addCarBtn = document.querySelector('button:has(span.material-symbols-outlined:contains("add_circle"))');
             if (addCarBtn) {
                 addCarBtn.addEventListener('click', openAddCarModal);
             }
 
-            // Close modal on ESC key
+
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') {
                     closeModal();
