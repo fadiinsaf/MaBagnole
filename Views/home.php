@@ -61,7 +61,8 @@
 </head>
 
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white transition-colors duration-200">
-    <?php require_once __DIR__ . "/../Header&Footer&Aside/header.php" ?>
+
+<?php require_once __DIR__ . "/../Components/header.php" ?>
     <!-- Hero Section -->
     <div class="relative w-full bg-background-light dark:bg-background-dark">
         <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
@@ -302,7 +303,8 @@
             </div>
         </div>
     </div>
-    <?php require_once __DIR__ . "/../Header&Footer&Aside/footer.php" ?>
+
+<?php require_once __DIR__ . "/../Components/footer.php" ?>
 </body>
 
 </html>
