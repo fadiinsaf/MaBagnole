@@ -36,7 +36,7 @@
     class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-white antialiased overflow-hidden">
     <div class="flex h-screen overflow-hidden">
 
-<?php require_once __DIR__ . "/../Components/aside.php" ?>
+        <?php require_once __DIR__ . "/../Components/aside.php" ?>
 
         <div class="flex flex-1 flex-col overflow-hidden relative">
             <header
@@ -59,6 +59,18 @@
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Fleet Management</h2>
                         <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Manage your vehicle inventory, track
                             status, and update details.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button
+                            class="inline-flex items-center justify-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:hover:bg-slate-700">
+                            <span class="material-symbols-outlined !text-[20px]">download</span>
+                            Export
+                        </button>
+                        <button onclick="openAddCarModal()"
+                            class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-slate-900">
+                            <span class="material-symbols-outlined !text-[20px]">add_circle</span>
+                            Add New Car
+                        </button>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -399,6 +411,330 @@
             </main>
         </div>
     </div>
+
+    <!-- Add Car Modal -->
+    <div id="addCarModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div class="fixed inset-0 bg-black/50 transition-opacity" onclick="closeModal()"></div>
+
+            <div
+                class="relative w-full max-w-2xl transform rounded-xl bg-white shadow-xl transition-all dark:bg-[#151b2b] dark:border dark:border-slate-700">
+                <!-- Modal Header -->
+                <div
+                    class="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-700">
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Add New Car(s)</h3>
+                    <button onclick="closeModal()"
+                        class="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-700">
+                        <span class="material-symbols-outlined !text-[20px]">close</span>
+                    </button>
+                </div>
+
+                <!-- Form Container -->
+                <form id="carForm" class="p-6">
+                    <div id="carFormsContainer">
+                        <!-- Car forms will be dynamically added here -->
+                        <div class="car-form mb-6 p-4 border border-slate-200 rounded-lg dark:border-slate-700">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-medium text-slate-900 dark:text-white">Car #1</h4>
+                                <span class="text-sm text-slate-500 dark:text-slate-400">Required form</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Brand -->
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Brand
+                                        *</label>
+                                    <input type="text" name="brand[]" required
+                                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                        placeholder="e.g., Tesla">
+                                </div>
+
+                                <!-- Model -->
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Model
+                                        *</label>
+                                    <input type="text" name="model[]" required
+                                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                        placeholder="e.g., Model 3">
+                                </div>
+
+                                <!-- Category -->
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Category
+                                        *</label>
+                                    <select name="id_category[]" required
+                                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary">
+                                        <option value="">Select Category</option>
+                                        <option value="1">Economy</option>
+                                        <option value="2">Compact</option>
+                                        <option value="3">Sedan</option>
+                                        <option value="4">SUV</option>
+                                        <option value="5">Luxury</option>
+                                        <option value="6">Electric</option>
+                                        <option value="7">Sports</option>
+                                    </select>
+                                </div>
+
+                                <!-- Availability -->
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Status
+                                        *</label>
+                                    <select name="availability[]" required
+                                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary">
+                                        <option value="1">Available</option>
+                                        <option value="0">Rented</option>
+                                        <option value="0">Maintenance</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mt-4 space-y-2">
+                                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Description
+                                    *</label>
+                                <textarea name="description[]" rows="3" required
+                                    class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                    placeholder="Enter car description..."></textarea>
+                            </div>
+
+                            <!-- Image URL -->
+                            <div class="mt-4 space-y-2">
+                                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Image URL
+                                    *</label>
+                                <input type="url" name="image[]" required
+                                    class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                    placeholder="https://example.com/car-image.jpg">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-6 flex flex-col sm:flex-row justify-between gap-3">
+                        <button type="button" onclick="addAnotherCar()"
+                            class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700">
+                            <span class="material-symbols-outlined !text-[20px]">add</span>
+                            Add Another Car
+                        </button>
+
+                        <div class="flex gap-3">
+                            <button type="button" onclick="closeModal()"
+                                class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-slate-900">
+                                <span class="material-symbols-outlined !text-[20px]">save</span>
+                                Save All Cars
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let carFormCount = 1;
+
+        // Open modal function
+        function openAddCarModal() {
+            const modal = document.getElementById('addCarModal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close modal function
+        function closeModal() {
+            const modal = document.getElementById('addCarModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Add another car form
+        function addAnotherCar() {
+            carFormCount++;
+            const container = document.getElementById('carFormsContainer');
+
+            const newForm = document.createElement('div');
+            newForm.className = 'car-form mb-6 p-4 border border-slate-200 rounded-lg dark:border-slate-700';
+            newForm.innerHTML = `
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="font-medium text-slate-900 dark:text-white">Car #${carFormCount}</h4>
+                <button type="button" onclick="removeCarForm(this)" class="text-red-500 hover:text-red-700 text-sm flex items-center gap-1">
+                    <span class="material-symbols-outlined !text-[16px]">delete</span>
+                    Remove
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Brand -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Brand *</label>
+                    <input type="text" name="brand[]" required
+                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                        placeholder="e.g., Tesla">
+                </div>
+                
+                <!-- Model -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Model *</label>
+                    <input type="text" name="model[]" required
+                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                        placeholder="e.g., Model 3">
+                </div>
+                
+                <!-- Category -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Category *</label>
+                    <select name="id_category[]" required
+                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary">
+                        <option value="">Select Category</option>
+                        <option value="1">Economy</option>
+                        <option value="2">Compact</option>
+                        <option value="3">Sedan</option>
+                        <option value="4">SUV</option>
+                        <option value="5">Luxury</option>
+                        <option value="6">Electric</option>
+                        <option value="7">Sports</option>
+                    </select>
+                </div>
+                
+                <!-- Availability -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Status *</label>
+                    <select name="availability[]" required
+                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary">
+                        <option value="1">Available</option>
+                        <option value="0">Rented</option>
+                        <option value="0">Maintenance</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Description -->
+            <div class="mt-4 space-y-2">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Description *</label>
+                <textarea name="description[]" rows="3" required
+                    class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    placeholder="Enter car description..."></textarea>
+            </div>
+            
+            <!-- Image URL -->
+            <div class="mt-4 space-y-2">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Image URL *</label>
+                <input type="url" name="image[]" required
+                    class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    placeholder="https://example.com/car-image.jpg">
+            </div>
+        `;
+
+            container.appendChild(newForm);
+
+            // Scroll to the new form
+            newForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Remove car form - but not the first one
+        function removeCarForm(button) {
+            const form = button.closest('.car-form');
+            const allForms = document.querySelectorAll('.car-form');
+
+            // Don't allow removing if there's only one form
+            if (form && allForms.length > 1) {
+                form.remove();
+                updateCarNumbers();
+            }
+        }
+
+        // Update car numbers after removal
+        function updateCarNumbers() {
+            const forms = document.querySelectorAll('.car-form');
+            forms.forEach((form, index) => {
+                const title = form.querySelector('h4');
+                if (title) {
+                    title.textContent = `Car #${index + 1}`;
+                }
+            });
+            carFormCount = forms.length;
+        }
+
+        // Handle form submission
+        document.getElementById('carForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const brands = formData.getAll('brand[]');
+            const models = formData.getAll('model[]');
+            const availabilities = formData.getAll('availability[]');
+            const images = formData.getAll('image[]');
+            const descriptions = formData.getAll('description[]');
+            const categories = formData.getAll('id_category[]');
+
+            // Process each car
+            for (let i = 0; i < brands.length; i++) {
+                const carData = {
+                    brand: brands[i],
+                    model: models[i],
+                    availability: availabilities[i] === '1' ? true : false,
+                    image: images[i],
+                    description: descriptions[i],
+                    id_category: categories[i]
+                };
+
+                // Here you would normally send this data to your backend
+                console.log('Car data to save:', carData);
+
+                // You would typically make an AJAX request here:
+                /*
+                fetch('/api/cars', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(carData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+                */
+            }
+
+            // Show success message
+            alert(`Successfully added ${brands.length} car(s) to the system!`);
+
+            // Reset form and close modal
+            this.reset();
+            closeModal();
+
+            // Reset to one form
+            const container = document.getElementById('carFormsContainer');
+            const forms = container.querySelectorAll('.car-form');
+            for (let i = 1; i < forms.length; i++) {
+                forms[i].remove();
+            }
+            carFormCount = 1;
+        });
+
+        // Add event listener to the "Add New Car" button in the header
+        document.addEventListener('DOMContentLoaded', function () {
+            const addCarBtn = document.querySelector('button:has(span.material-symbols-outlined:contains("add_circle"))');
+            if (addCarBtn) {
+                addCarBtn.addEventListener('click', openAddCarModal);
+            }
+
+            // Close modal on ESC key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
