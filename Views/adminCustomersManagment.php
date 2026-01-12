@@ -1,3 +1,22 @@
+<?php
+require_once __DIR__ . "/../Database/Database.php";
+require_once __DIR__ . "/../Models/Admin.php";
+require_once __DIR__ . "/../Models/Client.php";
+require_once __DIR__ . "/../Models/Car.php";
+require_once __DIR__ . "/../Models/Reservation.php";
+require_once __DIR__ . "/../Models/User.php";
+require_once __DIR__ . "/../Middlewares/IsAuthed.php";
+require_once __DIR__ . "/../Middlewares/IsAdmin.php";
+
+session_start();
+
+IsAuthed::handle();
+IsAdmin::handle();
+
+$admin = $_SESSION["user"];
+$users = Admin::getAllUsers();
+?>
+
 <!DOCTYPE html>
 <html class="light" lang="en">
 
@@ -39,21 +58,11 @@
 <?php require_once __DIR__ . "/../Components/aside.php" ?>
 
         <div class="flex flex-1 flex-col overflow-hidden relative">
-            <header
-                class="flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white px-6 dark:border-slate-800 dark:bg-[#151b2b]">
-                <button class="mr-4 text-slate-500 hover:text-slate-700 md:hidden">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
-                <div class="flex items-center gap-4 ml-auto">
-                    <div class="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-700">
-                        <div class="hidden text-right md:block">
-                            <p class="text-sm font-medium text-slate-900 dark:text-white">Admin User</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Super Admin</p>
-                        </div>
-                    </div>
-                </div>
-            </header>
+
+            <?php require_once __DIR__ . "/../Components/headerDashBoard.php" ?>
+
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-background-light dark:bg-background-dark p-6">
+                
                 <div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Customers Management</h2>
@@ -61,11 +70,12 @@
                             registered customers.</p>
                     </div>
                 </div>
+
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
                     <div
                         class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-[#151b2b]">
                         <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Customers</p>
-                        <p class="mt-2 text-3xl font-bold text-slate-900 dark:text-white">12,345</p>
+                        <p class="mt-2 text-3xl font-bold text-slate-900 dark:text-white"><?= count($users) ?></p>
                         <div class="mt-2 flex items-center text-xs text-green-600">
                             <span class="material-symbols-outlined !text-[14px] mr-1">trending_up</span>
                             +12% from last month
@@ -98,6 +108,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div
                     class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-[#151b2b]">
                     <div
@@ -127,8 +138,11 @@
                             </select>
                         </div>
                     </div>
+
                     <div class="overflow-x-auto">
+
                         <table class="w-full text-left text-sm">
+
                             <thead
                                 class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800 dark:text-slate-400">
                                 <tr>
@@ -146,17 +160,17 @@
                                     <th class="px-6 py-3 font-semibold text-right">Actions</th>
                                 </tr>
                             </thead>
+
                             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+
+                            <?php foreach($users as $user) :?>
+
                                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 group">
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
-                                            <div class="h-10 w-10 rounded-full bg-slate-200 bg-cover bg-center ring-2 ring-white dark:ring-[#151b2b]"
-                                                data-alt="Portrait of John Doe"
-                                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDXRb7YtNmmdddAh1pWQE9hc1PQskru7CcsyXwc99sL8UtAZq8a9CLaCOuHKgLMBp08QIttan19m1VVmUZf50gKD-9okwpRR2ZXPOVSpg3KZmwQJyv7JEmz0b_OAecWDXjQfeMs4AVA13vRM9OSqqhguch2TTdHWcfb1HZj2EhfGpcCu_Tx_QQTA__5fUZan2tvvPNn7bwxyknrRRtV4cyqtvHxmfuHYjcy9342G2YHrgs41CfMl75ByEvOMtbkoEgLJFUYxkJadPE')">
-                                            </div>
                                             <div>
-                                                <p class="font-medium text-slate-900 dark:text-white">John Doe</p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">ID: #CUS-8921</p>
+                                                <p class="font-medium text-slate-900 dark:text-white"><?= $user["name"] ?></p>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400">ID: <?= $user["id"] ?></p>
                                             </div>
                                         </div>
                                     </td>
@@ -165,357 +179,60 @@
                                             <div class="flex items-center text-slate-600 dark:text-slate-300">
                                                 <span
                                                     class="material-symbols-outlined !text-[16px] mr-2 text-slate-400">mail</span>
-                                                john@example.com
-                                            </div>
-                                            <div class="flex items-center text-slate-600 dark:text-slate-300">
-                                                <span
-                                                    class="material-symbols-outlined !text-[16px] mr-2 text-slate-400">phone</span>
-                                                +1 (555) 123-4567
+                                                <?= $user["email"] ?>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <span
-                                            class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                                            Active
+                                            class="inline-flex items-center rounded-full <?= $user["is_active"] ? "bg-green-300" : "bg-red-300" ?> px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                            <?= $user["is_active"] ? "Active" : "Blocked" ?>
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-slate-500 dark:text-slate-400">
-                                        Oct 24, 2023
+                                       <?= $user["created_at"] ?>
                                     </td>
                                     <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">
-                                        $4,250.00
+                                        <?= random_int(300,30000) ?> DH
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <div
                                             class="flex items-center justify-end gap-3 group-hover:opacity-100 transition-opacity">
-                                            <div
-                                                class="flex items-center gap-2 pr-3 border-r border-slate-200 dark:border-slate-700">
-                                                <span
-                                                    class="text-xs font-medium text-slate-500 dark:text-slate-400 mr-2">Active</span>
-                                                <label class="relative inline-flex items-center cursor-pointer"
-                                                    title="Deactivate Customer">
-                                                    <input checked="" class="sr-only peer" type="checkbox" value="" />
-                                                    <div
-                                                        class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary">
-                                                    </div>
-                                                </label>
-                                            </div>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
-                                                title="View Profile">
-                                                <span class="material-symbols-outlined !text-[20px]">visibility</span>
-                                            </button>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-blue-400"
-                                                title="Edit Customer">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-red-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-red-400"
-                                                title="Delete">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
+                                            <?php if(!$user['is_active']) : ?>
+                                                    <a
+                                                        href="../Controllers/user_activation.php?id=<?= $user['id']?>&action=activate"
+                                                        class="px-1 py-1 rounded-lg font-sm text-white bg-green-500 hover:bg-green-700 transition"
+                                                    >
+                                                        Activate
+                                                    </a> 
+                                            <?php else : ?>   
+                                                
+                                                    <a
+                                                        href="../Controllers/user_activation.php?id=<?= $user['id']?>&action=deactivate"
+                                                        class="px-1 py-1 rounded-lg font-sm text-white bg-red-500 hover:bg-red-700 transition"
+                                                    >
+                                                        Deactivate
+                                                    </a> 
+
+                                            <?php endif ; ?>   
+                                            
                                         </div>
                                     </td>
                                 </tr>
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 group">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-10 w-10 rounded-full bg-slate-200 bg-cover bg-center ring-2 ring-white dark:ring-[#151b2b]"
-                                                data-alt="Portrait of Sarah Smith"
-                                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDVq8ziec5Df3Q33G81NlKutjHW_RvHSDo5K_2QxzenP5K-2qV73pI6gH8CbjhOnLarWCTgkBfIaL_ijGD7b-9GS2ge1pQs06KSOzE1-11v3Iy3X48-6xsfuV93XUJSZxYo9ammEwfbPYZPcBM9yXo17aixmP6BpFM6Yazzr1aMjUl6XihuK8E_QM9c_OojoiOzc_KMedZ4hMI3Wrf-S9yHZ6x0QM1Uje0Q5pZO2M9hpFPYuw3GQ6SjA-6Ve7lYDTlNLwZttuTmkeY')">
-                                            </div>
-                                            <div>
-                                                <p class="font-medium text-slate-900 dark:text-white">Sarah Smith</p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">ID: #CUS-4421</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex flex-col gap-1">
-                                            <div class="flex items-center text-slate-600 dark:text-slate-300">
-                                                <span
-                                                    class="material-symbols-outlined !text-[16px] mr-2 text-slate-400">mail</span>
-                                                sarah@example.com
-                                            </div>
-                                            <div class="flex items-center text-slate-600 dark:text-slate-300">
-                                                <span
-                                                    class="material-symbols-outlined !text-[16px] mr-2 text-slate-400">phone</span>
-                                                +1 (555) 987-6543
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
-                                            Pending Verification
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400">
-                                        Nov 02, 2023
-                                    </td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">
-                                        $320.00
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div
-                                            class="flex items-center justify-end gap-3 group-hover:opacity-100 transition-opacity">
-                                            <div
-                                                class="flex items-center gap-2 pr-3 border-r border-slate-200 dark:border-slate-700">
-                                                <span
-                                                    class="text-xs font-medium text-slate-500 dark:text-slate-400 mr-2">Activate</span>
-                                                <label class="relative inline-flex items-center cursor-pointer"
-                                                    title="Activate Customer">
-                                                    <input class="sr-only peer" type="checkbox" value="" />
-                                                    <div
-                                                        class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary">
-                                                    </div>
-                                                </label>
-                                            </div>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
-                                                title="View Profile">
-                                                <span class="material-symbols-outlined !text-[20px]">visibility</span>
-                                            </button>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-blue-400"
-                                                title="Edit Customer">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-red-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-red-400"
-                                                title="Delete">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 group">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-10 w-10 rounded-full bg-slate-200 bg-cover bg-center ring-2 ring-white dark:ring-[#151b2b]"
-                                                data-alt="Portrait of Mike Johnson"
-                                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBxgtq92cGcR3fphAregcgUjyYDpXJl6eiUpnR1a5ijThI3n_cIpOmdnR1WjeUnnoOxlZcmPbnim3fyONJi8dMkO1_yLc5EAsZzL6sidCHDwbMwOA-5mvf4evJkXpUBPk2nMbw_jN2rvfZYt4XDqvYirXCED3XBwYYUqbm95jeNSuMxcLrYL8qoTj8W-Cm3sfHyBIh78C0rw_Iu59XWApFKFf2l-7yowKa0tOSaLzBIWHmlWLEzl__hPydixxLx2_rXnsL8RptjDZA')">
-                                            </div>
-                                            <div>
-                                                <p class="font-medium text-slate-900 dark:text-white">Mike Johnson</p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">ID: #CUS-1102</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex flex-col gap-1">
-                                            <div class="flex items-center text-slate-600 dark:text-slate-300">
-                                                <span
-                                                    class="material-symbols-outlined !text-[16px] mr-2 text-slate-400">mail</span>
-                                                mike.j@example.com
-                                            </div>
-                                            <div class="flex items-center text-slate-600 dark:text-slate-300">
-                                                <span
-                                                    class="material-symbols-outlined !text-[16px] mr-2 text-slate-400">phone</span>
-                                                +1 (555) 456-7890
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900/30 dark:text-red-300">
-                                            Suspended
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400">
-                                        Sep 15, 2023
-                                    </td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">
-                                        $85.00
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div
-                                            class="flex items-center justify-end gap-3 group-hover:opacity-100 transition-opacity">
-                                            <div
-                                                class="flex items-center gap-2 pr-3 border-r border-slate-200 dark:border-slate-700">
-                                                <span
-                                                    class="text-xs font-medium text-slate-500 dark:text-slate-400 mr-2">Activate</span>
-                                                <label class="relative inline-flex items-center cursor-pointer"
-                                                    title="Reactivate Customer">
-                                                    <input class="sr-only peer" type="checkbox" value="" />
-                                                    <div
-                                                        class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary">
-                                                    </div>
-                                                </label>
-                                            </div>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
-                                                title="View Profile">
-                                                <span class="material-symbols-outlined !text-[20px]">visibility</span>
-                                            </button>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-blue-400"
-                                                title="Edit Customer">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-red-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-red-400"
-                                                title="Delete">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 group">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white ring-2 ring-white dark:ring-[#151b2b]">
-                                                EL
-                                            </div>
-                                            <div>
-                                                <p class="font-medium text-slate-900 dark:text-white">Emma Larson</p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">ID: #CUS-3392</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex flex-col gap-1">
-                                            <div class="flex items-center text-slate-600 dark:text-slate-300">
-                                                <span
-                                                    class="material-symbols-outlined !text-[16px] mr-2 text-slate-400">mail</span>
-                                                emma.l@example.com
-                                            </div>
-                                            <div class="flex items-center text-slate-600 dark:text-slate-300">
-                                                <span
-                                                    class="material-symbols-outlined !text-[16px] mr-2 text-slate-400">phone</span>
-                                                +1 (555) 222-3333
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                                            Active
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400">
-                                        Dec 01, 2023
-                                    </td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">
-                                        $1,500.00
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div
-                                            class="flex items-center justify-end gap-3 group-hover:opacity-100 transition-opacity">
-                                            <div
-                                                class="flex items-center gap-2 pr-3 border-r border-slate-200 dark:border-slate-700">
-                                                <span
-                                                    class="text-xs font-medium text-slate-500 dark:text-slate-400 mr-2">Active</span>
-                                                <label class="relative inline-flex items-center cursor-pointer"
-                                                    title="Deactivate Customer">
-                                                    <input checked="" class="sr-only peer" type="checkbox" value="" />
-                                                    <div
-                                                        class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary">
-                                                    </div>
-                                                </label>
-                                            </div>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
-                                                title="View Profile">
-                                                <span class="material-symbols-outlined !text-[20px]">visibility</span>
-                                            </button>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-blue-400"
-                                                title="Edit Customer">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-red-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-red-400"
-                                                title="Delete">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 group">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-10 w-10 rounded-full bg-slate-200 bg-cover bg-center ring-2 ring-white dark:ring-[#151b2b]"
-                                                data-alt="Portrait of David Chen"
-                                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBjab56HFsT7S7Z0pIelDj0-4KEwK63lFDiGJ6eRtX7GU7RTEPSjO0ru4B4wW5qINCYisL7XoZjiVrR1fka4gHs9Lwu25DnLeUArdXCe1GMKi4ffQAl5aUVo9ZkeqJYz9K7UL3q87v4Fb5_pEGwea__gJ6iNAGsPwq5PBgNxLEvwd3Ckf2kC42_peuGahMZkwkC1EZFqYPI5b64af8fwHnvbmVq4cr-oh9P72lx8Jhfdq0D9k_vx7fLUThj10gCrs62vlJsT-ZlUTs')">
-                                            </div>
-                                            <div>
-                                                <p class="font-medium text-slate-900 dark:text-white">David Chen</p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">ID: #CUS-7781</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex flex-col gap-1">
-                                            <div class="flex items-center text-slate-600 dark:text-slate-300">
-                                                <span
-                                                    class="material-symbols-outlined !text-[16px] mr-2 text-slate-400">mail</span>
-                                                david.c@example.com
-                                            </div>
-                                            <div class="flex items-center text-slate-600 dark:text-slate-300">
-                                                <span
-                                                    class="material-symbols-outlined !text-[16px] mr-2 text-slate-400">phone</span>
-                                                +1 (555) 777-8888
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                                            Inactive
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400">
-                                        Aug 20, 2023
-                                    </td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">
-                                        $0.00
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div
-                                            class="flex items-center justify-end gap-3 group-hover:opacity-100 transition-opacity">
-                                            <div
-                                                class="flex items-center gap-2 pr-3 border-r border-slate-200 dark:border-slate-700">
-                                                <span
-                                                    class="text-xs font-medium text-slate-500 dark:text-slate-400 mr-2">Activate</span>
-                                                <label class="relative inline-flex items-center cursor-pointer"
-                                                    title="Activate Customer">
-                                                    <input class="sr-only peer" type="checkbox" value="" />
-                                                    <div
-                                                        class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary">
-                                                    </div>
-                                                </label>
-                                            </div>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
-                                                title="View Profile">
-                                                <span class="material-symbols-outlined !text-[20px]">visibility</span>
-                                            </button>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-blue-400"
-                                                title="Edit Customer">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-red-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-red-400"
-                                                title="Delete">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+
+                            <?php endforeach;?>
+
                             </tbody>
+
                         </table>
                     </div>
+
                     <div
                         class="flex items-center justify-between border-t border-slate-200 px-6 py-4 dark:border-slate-700">
                         <p class="text-sm text-slate-500 dark:text-slate-400">
                             Showing <span class="font-medium text-slate-900 dark:text-white">1</span> to <span
                                 class="font-medium text-slate-900 dark:text-white">5</span> of <span
-                                class="font-medium text-slate-900 dark:text-white">1,205</span> results
+                                class="font-medium text-slate-900 dark:text-white"><?= count($users) ?></span> results
                         </p>
                         <div class="flex gap-2">
                             <button
@@ -529,7 +246,9 @@
                             </button>
                         </div>
                     </div>
+
                 </div>
+
             </main>
         </div>
     </div>
