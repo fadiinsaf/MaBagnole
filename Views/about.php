@@ -1,3 +1,17 @@
+<?php
+require_once __DIR__ . "/../Models/Admin.php";
+require_once __DIR__ . "/../Models/Client.php";
+require_once __DIR__ . "/../Models/User.php";
+require_once __DIR__ . "/../Middlewares/IsAuthed.php";
+require_once __DIR__ . "/../Middlewares/IsClient.php";
+
+session_start();
+
+IsAuthed::handle();
+IsClient::handle();
+
+?>
+
 <!DOCTYPE html>
 <html class="light" lang="en">
 
