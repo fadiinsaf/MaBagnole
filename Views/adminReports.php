@@ -1,3 +1,24 @@
+<?php
+require_once __DIR__ . "/../Database/Database.php";
+require_once __DIR__ . "/../Models/Admin.php";
+require_once __DIR__ . "/../Models/Client.php";
+require_once __DIR__ . "/../Models/Car.php";
+require_once __DIR__ . "/../Models/Reservation.php";
+require_once __DIR__ . "/../Models/User.php";
+require_once __DIR__ . "/../Middlewares/IsAuthed.php";
+require_once __DIR__ . "/../Middlewares/IsAdmin.php";
+
+session_start();
+
+IsAuthed::handle();
+IsAdmin::handle();
+
+$admin = $_SESSION["user"];
+$reservations = Reservation::getAllReservations(5);
+$users = Admin::getAllUsers();
+$cars = Car::getAllCars();
+?>
+
 <!DOCTYPE html>
 <html class="light" lang="en">
 
@@ -38,20 +59,8 @@
 
 <?php require_once __DIR__ . "/../Components/aside.php" ?>
         <div class="flex flex-1 flex-col overflow-hidden relative">
-            <header
-                class="flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white px-6 dark:border-slate-800 dark:bg-[#151b2b]">
-                <button class="mr-4 text-slate-500 hover:text-slate-700 md:hidden">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
-                <div class="flex items-center gap-4 ml-auto">
-                    <div class="flex items-center gap-3">
-                        <div class="hidden text-right md:block">
-                            <p class="text-sm font-medium text-slate-900 dark:text-white">Admin User</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Super Admin</p>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <?php require_once __DIR__ . "/../Components/headerDashBoard.php" ?>
+
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-background-light dark:bg-background-dark p-6">
                 <div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
