@@ -1,3 +1,24 @@
+<?php
+require_once __DIR__ . "/../Database/Database.php";
+require_once __DIR__ . "/../Models/Admin.php";
+require_once __DIR__ . "/../Models/Client.php";
+require_once __DIR__ . "/../Models/Car.php";
+require_once __DIR__ . "/../Models/Category.php";
+require_once __DIR__ . "/../Models/User.php";
+require_once __DIR__ . "/../Middlewares/IsAuthed.php";
+require_once __DIR__ . "/../Middlewares/IsAdmin.php";
+
+session_start();
+
+IsAuthed::handle();
+IsAdmin::handle();
+
+$admin = $_SESSION["user"];
+$cars = Car::getAllCars();
+$categories = Category::getAllCategories();
+
+?>
+
 <!DOCTYPE html>
 <html class="light" lang="en">
 
@@ -39,21 +60,10 @@
         <?php require_once __DIR__ . "/../Components/aside.php" ?>
 
         <div class="flex flex-1 flex-col overflow-hidden relative">
-            <header
-                class="flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white px-6 dark:border-slate-800 dark:bg-[#151b2b]">
-                <button class="mr-4 text-slate-500 hover:text-slate-700 md:hidden">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
-                <div class="flex items-center gap-4 ml-auto">
-                    <div class="flex items-center gap-3">
-                        <div class="hidden text-right md:block">
-                            <p class="text-sm font-medium text-slate-900 dark:text-white">Admin User</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Super Admin</p>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <?php require_once __DIR__ . "/../Components/headerDashBoard.php" ?>
+
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-background-light dark:bg-background-dark p-6">
+
                 <div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Fleet Management</h2>
@@ -73,13 +83,15 @@
                         </button>
                     </div>
                 </div>
+
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
                     <div
                         class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-[#151b2b]">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Vehicles</p>
-                                <p class="mt-2 text-3xl font-bold text-slate-900 dark:text-white">45</p>
+                                <p class="mt-2 text-3xl font-bold text-slate-900 dark:text-white"><?= count($cars) ?>
+                                </p>
                             </div>
                             <div
                                 class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
@@ -92,7 +104,8 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Available</p>
-                                <p class="mt-2 text-3xl font-bold text-slate-900 dark:text-white">28</p>
+                                <p class="mt-2 text-3xl font-bold text-slate-900 dark:text-white">
+                                    <?= count(Car::getCarsByAvailability(1)); ?></p>
                             </div>
                             <div
                                 class="flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400">
@@ -105,7 +118,8 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Rented Out</p>
-                                <p class="mt-2 text-3xl font-bold text-slate-900 dark:text-white">12</p>
+                                <p class="mt-2 text-3xl font-bold text-slate-900 dark:text-white">
+                                    <?= count(Car::getCarsByAvailability(0)); ?></p>
                             </div>
                             <div
                                 class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
@@ -113,26 +127,16 @@
                             </div>
                         </div>
                     </div>
-                    <div
-                        class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-[#151b2b]">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-slate-500 dark:text-slate-400">In Maintenance</p>
-                                <p class="mt-2 text-3xl font-bold text-slate-900 dark:text-white">5</p>
-                            </div>
-                            <div
-                                class="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400">
-                                <span class="material-symbols-outlined">build</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div
                     class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-[#151b2b]">
+
                     <div
                         class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-700 gap-4">
                         <h3 class="text-lg font-semibold text-slate-900 dark:text-white">All Vehicles</h3>
+
                         <div class="flex gap-2 w-full sm:w-auto">
+
                             <div class="relative flex-1 sm:flex-none">
                                 <span
                                     class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined !text-[18px]">filter_list</span>
@@ -141,9 +145,9 @@
                                     <option>All Statuses</option>
                                     <option>Available</option>
                                     <option>Rented</option>
-                                    <option>Maintenance</option>
                                 </select>
                             </div>
+
                             <div class="relative flex-1 sm:flex-none">
                                 <span
                                     class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined !text-[18px]">sort</span>
@@ -154,246 +158,90 @@
                                     <option>Price: High to Low</option>
                                 </select>
                             </div>
+
                         </div>
+
                     </div>
+
                     <div class="overflow-x-auto">
+
                         <table class="w-full text-left text-sm">
                             <thead
                                 class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800 dark:text-slate-400">
                                 <tr>
                                     <th class="px-6 py-3 font-semibold">Vehicle Info</th>
-                                    <th class="px-6 py-3 font-semibold">License Plate</th>
-                                    <th class="px-6 py-3 font-semibold">Daily Rate</th>
+                                    <th class="px-6 py-3 font-semibold">Model</th>
+                                    <th class="px-6 py-3 font-semibold">Preice Per Day</th>
                                     <th class="px-6 py-3 font-semibold">Status</th>
                                     <th class="px-6 py-3 font-semibold text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-10 w-16 rounded bg-slate-100 bg-cover bg-center"
-                                                data-alt="Tesla Model 3 car thumbnail"
-                                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDliqAJSnaDbrWFrRyvHh5ej2KQxqAHBDmENdBDo-uqqsmlyVZmw-H4eiEkcHO9RL_1kUmzac2ILxioIXCTjEzWs93csje5JVvD_7_qjHOidjJ0KMwgpsEmpFOYSmOwt7t1TKYFhfloIElGaHL65FFvIVUr2l87OzC8nIVRvmloehfoV4Lv33n8e4KOukYmQHFRwLzpHoZ-IbrhzP5UFhrTSrNLOABxlF9uvkA8kVIFTF8nnlLxEugbUxb64I7eDdWkwd7JGic2pAY')">
+                                <?php foreach ($cars as $car): ?>
+                                <form action="editCar.php" method="POST">
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-3">
+                                                <div class="h-10 w-16 rounded bg-slate-100 bg-cover bg-center"
+                                                    data-alt="Tesla Model 3 car thumbnail"
+                                                    style="background-image: url('<?= $car["image"] ?>')">
+                                                    <input type="hidden" value="<?= $car["image"] ?>" name="image">
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium text-slate-900 dark:text-white">
+                                                        <?= $car["brand"] ?></p>
+                                                    <input type="hidden" value="<?= $car["brand"] ?>" name="brand">
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p class="font-medium text-slate-900 dark:text-white">Tesla Model 3</p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">Electric • 2023
-                                                </p>
+                                        </td>
+                                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400 font-mono">
+                                            <?= $car["model"] ?></td>
+                                            <input type="hidden" value="<?= $car["model"] ?>" name="model">
+                                        <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">
+                                            <?= $car["pricePerDay"] . " DH" ?></td>
+                                            <input type="hidden" value="<?= $car["pricePerDay"] ?>" name="price">
+                                        <td class="px-6 py-4">
+                                            <span
+                                                class="inline-flex items-center rounded-full <?= $car["availability"] ? "bg-green-100" : "bg-red-300" ?> px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                                <?= $car["availability"] ? "Available" : "Rented" ?>
+                                                <input type="hidden" value="<?= $car["availability"] ?>" name="availability">
+                                                <input type="hidden" value="<?= $car["description"] ?>" name="description">
+                                                <input type="hidden" value="<?= $car["id"] ?>" name="id">
+                                                <input type="hidden" value="<?= $car["id_category"] ?>" name="id_category">
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <div class="flex items-center justify-end gap-1">
+                                                <button type="submit"
+                                                    class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
+                                                    title="Edit Vehicle">
+                                                    <span class="material-symbols-outlined !text-[20px]">edit</span>
+                                                </button>
+
+                                                <a href="../Controllers/delete_car.php?id=<?= $car["id"] ?>"
+                                                    class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
+                                                    title="Edit Vehicle">
+                                                    <span class="material-symbols-outlined !text-[20px]">delete</span>
+                                                </a>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-600 dark:text-slate-400 font-mono">ABC-123</td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">$150.00</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                                            Available
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1">
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-700 dark:hover:text-white transition-colors"
-                                                title="Edit Vehicle">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
-                                                title="Delete Vehicle">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-10 w-16 rounded bg-slate-100 bg-cover bg-center"
-                                                data-alt="BMW X5 car thumbnail"
-                                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBjab56HFsT7S7Z0pIelDj0-4KEwK63lFDiGJ6eRtX7GU7RTEPSjO0ru4B4wW5qINCYisL7XoZjiVrR1fka4gHs9Lwu25DnLeUArdXCe1GMKi4ffQAl5aUVo9ZkeqJYz9K7UL3q87v4Fb5_pEGwea__gJ6iNAGsPwq5PBgNxLEvwd3Ckf2kC42_peuGahMZkwkC1EZFqYPI5b64af8fwHnvbmVq4cr-oh9P72lx8Jhfdq0D9k_vx7fLUThj10gCrs62vlJsT-ZlUTs')">
-                                            </div>
-                                            <div>
-                                                <p class="font-medium text-slate-900 dark:text-white">BMW X5</p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">SUV • 2022</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-600 dark:text-slate-400 font-mono">XYZ-789</td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">$200.00</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                                            Rented
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1">
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-700 dark:hover:text-white transition-colors"
-                                                title="Edit Vehicle">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
-                                                title="Delete Vehicle">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-10 w-16 rounded bg-slate-100 bg-cover bg-center"
-                                                data-alt="Renault Clio car thumbnail"
-                                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDMld1SvqCISaHJKFh_wxWoACbdkrXKPLvQWnnzQ_t_4Horf4MNmTcnONwFLY88EVvuh3unRnCq__nowSk6NZ-Lf2bKKjVJT_UCzXstwPf3186t_9ON-NiuwdmrEs7o7uVFTJNfJChOFSbtCxBEWuVyn-cua0ix8HFhM1NRHSGa96YavOo8dlWYwUMQc1OEmgq-buitrg6zWgEqHIwM4EXm0bfE7OHfqTbnrblAcj4Sj69HJgXe3U02iX9SrMxdiFXvl4Rn2Dv8lR0')">
-                                            </div>
-                                            <div>
-                                                <p class="font-medium text-slate-900 dark:text-white">Renault Clio</p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">Compact • 2021</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-600 dark:text-slate-400 font-mono">JKL-456</td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">$45.00</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900/30 dark:text-red-300">
-                                            Maintenance
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1">
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-700 dark:hover:text-white transition-colors"
-                                                title="Edit Vehicle">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
-                                                title="Delete Vehicle">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-10 w-16 rounded bg-slate-100 bg-cover bg-center"
-                                                data-alt="Ford Fiesta car thumbnail"
-                                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDMld1SvqCISaHJKFh_wxWoACbdkrXKPLvQWnnzQ_t_4Horf4MNmTcnONwFLY88EVvuh3unRnCq__nowSk6NZ-Lf2bKKjVJT_UCzXstwPf3186t_9ON-NiuwdmrEs7o7uVFTJNfJChOFSbtCxBEWuVyn-cua0ix8HFhM1NRHSGa96YavOo8dlWYwUMQc1OEmgq-buitrg6zWgEqHIwM4EXm0bfE7OHfqTbnrblAcj4Sj69HJgXe3U02iX9SrMxdiFXvl4Rn2Dv8lR0')">
-                                            </div>
-                                            <div>
-                                                <p class="font-medium text-slate-900 dark:text-white">Ford Fiesta</p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">Economy • 2022</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-600 dark:text-slate-400 font-mono">FOR-992</td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">$65.00</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                                            Available
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1">
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-700 dark:hover:text-white transition-colors"
-                                                title="Edit Vehicle">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
-                                                title="Delete Vehicle">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-10 w-16 rounded bg-slate-100 bg-cover bg-center"
-                                                data-alt="Toyota RAV4 car thumbnail"
-                                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBjab56HFsT7S7Z0pIelDj0-4KEwK63lFDiGJ6eRtX7GU7RTEPSjO0ru4B4wW5qINCYisL7XoZjiVrR1fka4gHs9Lwu25DnLeUArdXCe1GMKi4ffQAl5aUVo9ZkeqJYz9K7UL3q87v4Fb5_pEGwea__gJ6iNAGsPwq5PBgNxLEvwd3Ckf2kC42_peuGahMZkwkC1EZFqYPI5b64af8fwHnvbmVq4cr-oh9P72lx8Jhfdq0D9k_vx7fLUThj10gCrs62vlJsT-ZlUTs')">
-                                            </div>
-                                            <div>
-                                                <p class="font-medium text-slate-900 dark:text-white">Toyota RAV4</p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">SUV • 2023</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-600 dark:text-slate-400 font-mono">TOY-884</td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">$110.00</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                                            Rented
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1">
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-700 dark:hover:text-white transition-colors"
-                                                title="Edit Vehicle">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
-                                                title="Delete Vehicle">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-10 w-16 rounded bg-slate-100 bg-cover bg-center"
-                                                data-alt="Audi A4 car thumbnail"
-                                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDliqAJSnaDbrWFrRyvHh5ej2KQxqAHBDmENdBDo-uqqsmlyVZmw-H4eiEkcHO9RL_1kUmzac2ILxioIXCTjEzWs93csje5JVvD_7_qjHOidjJ0KMwgpsEmpFOYSmOwt7t1TKYFhfloIElGaHL65FFvIVUr2l87OzC8nIVRvmloehfoV4Lv33n8e4KOukYmQHFRwLzpHoZ-IbrhzP5UFhrTSrNLOABxlF9uvkA8kVIFTF8nnlLxEugbUxb64I7eDdWkwd7JGic2pAY')">
-                                            </div>
-                                            <div>
-                                                <p class="font-medium text-slate-900 dark:text-white">Audi A4</p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">Sedan • 2023</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-600 dark:text-slate-400 font-mono">AUD-221</td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">$180.00</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                                            Available
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1">
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-700 dark:hover:text-white transition-colors"
-                                                title="Edit Vehicle">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
-                                                title="Delete Vehicle">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+
+                                            
+                                        </td>
+                                    </tr>
+                                </form>
+
+                                <?php endforeach; ?>
+
                             </tbody>
                         </table>
+
                     </div>
+
                     <div
                         class="flex items-center justify-between border-t border-slate-200 bg-white px-6 py-4 dark:border-slate-700 dark:bg-[#151b2b]">
                         <div class="text-sm text-slate-500 dark:text-slate-400">
                             Showing <span class="font-medium text-slate-900 dark:text-white">1-6</span> of <span
-                                class="font-medium text-slate-900 dark:text-white">45</span> vehicles
+                                class="font-medium text-slate-900 dark:text-white"><?= count($cars) ?></span> vehicles
                         </div>
                         <div class="flex gap-2">
                             <button
@@ -430,8 +278,9 @@
                 </div>
 
                 <!-- Form Container -->
-                <form id="carForm" class="p-6">
+                <form id="carForm" class="p-6" action="../Controllers/add_car.php" method="POST">
                     <div id="carFormsContainer">
+
                         <!-- Car forms will be dynamically added here -->
                         <div class="car-form mb-6 p-4 border border-slate-200 rounded-lg dark:border-slate-700">
                             <div class="flex justify-between items-center mb-4">
@@ -458,32 +307,29 @@
                                         placeholder="e.g., Model 3">
                                 </div>
 
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Price Per Day
+                                        *</label>
+                                    <input type="number" name="pricePerDay[]" required
+                                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                        placeholder="e.g., 300 DH">
+                                </div>
+
                                 <!-- Category -->
                                 <div class="space-y-2">
                                     <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Category
                                         *</label>
+
                                     <select name="id_category[]" required
                                         class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary">
                                         <option value="">Select Category</option>
-                                        <option value="1">Economy</option>
-                                        <option value="2">Compact</option>
-                                        <option value="3">Sedan</option>
-                                        <option value="4">SUV</option>
-                                        <option value="5">Luxury</option>
-                                        <option value="6">Electric</option>
-                                        <option value="7">Sports</option>
-                                    </select>
-                                </div>
 
-                                <!-- Availability -->
-                                <div class="space-y-2">
-                                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Status
-                                        *</label>
-                                    <select name="availability[]" required
-                                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary">
-                                        <option value="1">Available</option>
-                                        <option value="0">Rented</option>
-                                        <option value="0">Maintenance</option>
+                                        <?php foreach ($categories as $catigory): ?>
+
+                                            <option value="<?= $catigory["id"] ?>"><?= $catigory["name"] ?></option>
+
+                                        <?php endforeach; ?>
+
                                     </select>
                                 </div>
                             </div>
@@ -506,6 +352,7 @@
                                     placeholder="https://example.com/car-image.jpg">
                             </div>
                         </div>
+
                     </div>
 
                     <!-- Action Buttons -->
@@ -584,32 +431,31 @@
                         placeholder="e.g., Model 3">
                 </div>
                 
-                <!-- Category -->
-                <div class="space-y-2">
-                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Category *</label>
-                    <select name="id_category[]" required
-                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary">
-                        <option value="">Select Category</option>
-                        <option value="1">Economy</option>
-                        <option value="2">Compact</option>
-                        <option value="3">Sedan</option>
-                        <option value="4">SUV</option>
-                        <option value="5">Luxury</option>
-                        <option value="6">Electric</option>
-                        <option value="7">Sports</option>
-                    </select>
-                </div>
-                
-                <!-- Availability -->
-                <div class="space-y-2">
-                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Status *</label>
-                    <select name="availability[]" required
-                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary">
-                        <option value="1">Available</option>
-                        <option value="0">Rented</option>
-                        <option value="0">Maintenance</option>
-                    </select>
-                </div>
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Price Per Day
+                                        *</label>
+                                    <input type="text" name="pricePerDay[]" required
+                                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                        placeholder="e.g., 300 DH">
+                                </div>
+
+                                <!-- Category -->
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Category
+                                        *</label>
+
+                                    <select name="id_category[]" required
+                                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary">
+                                        <option value="">Select Category</option>
+
+                                        <?php foreach ($categories as $catigory): ?>
+
+                                            <option value="<?= $catigory["id"] ?>"><?= $catigory["name"] ?></option>
+
+                                        <?php endforeach; ?>
+
+                                    </select>
+                                </div>
             </div>
             
             <!-- Description -->
@@ -661,59 +507,7 @@
 
 
         document.getElementById('carForm').addEventListener('submit', function (e) {
-            e.preventDefault();
 
-            const formData = new FormData(this);
-            const brands = formData.getAll('brand[]');
-            const models = formData.getAll('model[]');
-            const availabilities = formData.getAll('availability[]');
-            const images = formData.getAll('image[]');
-            const descriptions = formData.getAll('description[]');
-            const categories = formData.getAll('id_category[]');
-
-
-            for (let i = 0; i < brands.length; i++) {
-                const carData = {
-                    brand: brands[i],
-                    model: models[i],
-                    availability: availabilities[i] === '1' ? true : false,
-                    image: images[i],
-                    description: descriptions[i],
-                    id_category: categories[i]
-                };
-
-
-                console.log('Car data to save:', carData);
-
-
-                /*
-                fetch('/api/cars', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(carData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-                */
-            }
-
-
-            alert(`Successfully added ${brands.length} car(s) to the system!`);
-
-
-            this.reset();
-            closeModal();
-
-
-            const container = document.getElementById('carFormsContainer');
-            const forms = container.querySelectorAll('.car-form');
             for (let i = 1; i < forms.length; i++) {
                 forms[i].remove();
             }

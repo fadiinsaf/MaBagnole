@@ -17,12 +17,15 @@
                     href="fleet.php">Fleet</a>
                 <a class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-primary transition-colors"
                     href="about.php">About</a>
+                <!-- My Reservations Link -->
+                <a class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-primary transition-colors"
+                    href="myReservations.php">My Reservations</a>
             </div>
             <div class="hidden md:flex items-center gap-3">
-                <button
+                <a href="../Controllers/logout.php"
                     class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-red-600 rounded-lg transition-colors shadow-sm shadow-blue-500/30">
                     Log out
-                </button>
+                </a>
             </div>
             <div class="md:hidden flex items-center">
                 <button class="text-slate-700 dark:text-white">

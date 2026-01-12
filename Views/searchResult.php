@@ -13,19 +13,18 @@ session_start();
 IsAuthed::handle();
 IsClient::handle();
 
-$page = isset($_GET["page"]) ? (int)$_GET["page"] : 1;
-if ($page < 1) $page = 1;
 
-$perPage = 9;
-$offset = ($page - 1) * $perPage;
+if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["model"])) {
+    $model = $_GET["model"];
 
-$totalCars = Car::getCarsCount();
-$totalPages = ceil($totalCars / $perPage);
+    $cars = Car::searchCarByModel($model);
 
-$cars = Car::getPaginated($perPage, $offset);
 
-$categories = Category::getAllCategories();
-$count = Category::getCarsCountInCategories();
+} else {
+    header("Location: /Views/home.php");
+    exit();
+}
+
 
 ?>
 
@@ -100,52 +99,14 @@ $count = Category::getCarsCountInCategories();
 <?php require_once __DIR__ . "/../Components/header.php" ?>
 
     <div class="flex flex-col lg:flex-row max-w-7xl mx-auto w-full min-h-screen">
-
-        <aside
-            class="w-full lg:w-72 flex-shrink-0 p-6 lg:border-r border-border-light dark:border-border-dark bg-white/50 dark:bg-background-dark/50">
-            <div class="lg:hidden flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">Filters</h3>
-                <span class="material-symbols-outlined">filter_list</span>
-            </div>
-            <div class="flex flex-col gap-6">
-
-                <div>
-
-                    <h3 class="text-text-main dark:text-white tracking-tight text-lg font-bold leading-tight pb-3">
-                        Catigories</h3>
-
-                    <div class="flex flex-col gap-2">
-
-                    <?php foreach($categories as $category) : ?>
-
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input
-                                value="<?= $category["id"] ?>"
-                                class="category-filter h-5 w-5 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-primary focus:ring-primary/20"
-                                type="checkbox" />
-                            <span
-                                class="text-text-main dark:text-gray-300 text-sm font-medium group-hover:text-primary transition-colors"><?= $category["name"]?></span>
-                            <span class="ml-auto text-xs text-text-secondary dark:text-gray-500">(<?= $count[$category["name"]]?>)</span>
-                        </label>
-
-                    <?php endforeach ; ?>
-
-
-                    </div>
-
-                </div>
-
-            </div>
-        </aside>
-
         <main class="flex-1 p-6 lg:p-10">
 
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
                 <div class="flex flex-col gap-2">
                     <h1
                         class="text-text-main dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">
-                        Our Fleet</h1>
-                    <p class="text-text-secondary dark:text-gray-400 text-base font-normal leading-normal">Showing <?= count($cars) ?>
+                        Resault</h1>
+                    <p class="text-text-secondary dark:text-gray-400 text-base font-normal leading-normal">Found <?= count($cars) ?>
                         available cars ready for your journey</p>
                 </div>
                 <div class="flex items-center gap-2">
@@ -213,29 +174,41 @@ $count = Category::getCarsCountInCategories();
                             </div>
                         </article>
                 <?php endforeach; ?>
-
             </div>
             
-            <div class="flex gap-2 justify-center mt-8">
-
-                <?php if ($page > 1): ?>
-                <a href="?page=<?= $page-1 ?>" class="px-4 py-2 border rounded">‹</a>
-                <?php endif; ?>
-
-                <?php for ($i=1; $i <= $totalPages; $i++): ?>
-                <a href="?page=<?= $i ?>"
-                class="px-4 py-2 rounded
-                <?= $i == $page ? 'bg-blue-600 text-white' : 'border' ?>">
-
-                <?= $i ?>
+            <div class="flex flex-col sm:flex-row items-center justify-between border-t border-border-light dark:border-border-dark pt-8 gap-4">
                 
-                </a>
-                <?php endfor; ?>
-
-                <?php if ($page < $totalPages): ?>
-                <a href="?page=<?= $page+1 ?>" class="px-4 py-2 border rounded">›</a>
-                <?php endif; ?>
-
+                <span class="text-sm text-text-secondary dark:text-gray-400">Showing <span
+                        class="font-bold text-text-main dark:text-white">1-6</span> of <span
+                        class="font-bold text-text-main dark:text-white">24</span> results</span>
+                <div class="flex items-center gap-2">
+                    <button
+                        class="flex items-center justify-center h-10 w-10 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-gray-800 text-text-secondary dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                        disabled="">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <button
+                        class="flex items-center justify-center h-10 w-10 rounded-lg bg-primary text-white font-bold transition-colors">
+                        1
+                    </button>
+                    <button
+                        class="flex items-center justify-center h-10 w-10 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-gray-800 text-text-secondary dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary dark:hover:text-primary transition-colors">
+                        2
+                    </button>
+                    <button
+                        class="flex items-center justify-center h-10 w-10 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-gray-800 text-text-secondary dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary dark:hover:text-primary transition-colors">
+                        3
+                    </button>
+                    <span class="text-text-secondary dark:text-gray-400 px-1">...</span>
+                    <button
+                        class="flex items-center justify-center h-10 w-10 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-gray-800 text-text-secondary dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary dark:hover:text-primary transition-colors">
+                        5
+                    </button>
+                    <button
+                        class="flex items-center justify-center h-10 w-10 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-gray-800 text-text-secondary dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary dark:hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
             </div>
 
         </main>
@@ -243,30 +216,7 @@ $count = Category::getCarsCountInCategories();
     </div>
 
 <?php require_once __DIR__ . "/../Components/footer.php" ?>
-<script>
-document.querySelectorAll(".category-filter").forEach(cb => {
-    cb.addEventListener("change", function() {
 
-        let selected = [];
-
-        document.querySelectorAll(".category-filter:checked").forEach(c => {
-            selected.push(c.value);
-        });
-
-        let xhr = new XMLHttpRequest();
-        xhr.open("POST", "/Controllers/filter_cars.php", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-        xhr.onload = function () {
-            if (this.status === 200) {
-                document.getElementById("carsContainer").innerHTML = this.responseText;
-            }
-        };
-        console.log(selected);
-        xhr.send("categories=" + selected.join(","));
-    });
-});
-</script>
 </body>
 
 </html>
