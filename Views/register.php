@@ -1,3 +1,8 @@
+<?php 
+    session_start();
+    require_once __DIR__ . "/../Models/User.php";
+?>
+
 <!DOCTYPE html>
 <html class="light" lang="en">
 
@@ -61,7 +66,7 @@
                     <h2 class="text-3xl font-bold leading-tight tracking-tight text-[#0d121b] dark:text-white">Create your account</h2>
                     <p class="mt-2 text-sm text-[#4c669a] dark:text-gray-400">Join us to find the perfect ride for your next journey.</p>
                 </div>
-                <form action="#" class="space-y-5" method="POST">
+                <form action="/../Controllers/add_user.php" class="space-y-5" method="POST">
                     <div>
                         <label class="block text-sm font-medium leading-6 text-[#0d121b] dark:text-gray-200 mb-2" for="name">Full Name</label>
                         <div class="relative">
@@ -69,6 +74,10 @@
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                                 <span class="material-symbols-outlined text-[#4c669a]" style="font-size: 20px;">person</span>
                             </div>
+                            <?php
+                            User::showError("fields");
+                            User::showError("name")
+                            ?>
                         </div>
                     </div>
                     <div>
@@ -78,6 +87,10 @@
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                                 <span class="material-symbols-outlined text-[#4c669a]" style="font-size: 20px;">mail</span>
                             </div>
+                            <?php
+                            User::showError("fields");
+                            User::showError("email");
+                            ?>
                         </div>
                     </div>
                     <div>
@@ -85,18 +98,34 @@
                         <div class="relative">
                             <input class="block w-full rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-[#1A2230] py-3 px-4 text-[#0d121b] dark:text-white placeholder:text-[#4c669a] dark:placeholder:text-gray-500 focus:border-primary focus:ring-1 focus:ring-primary sm:text-base outline-none transition-colors" id="password" name="password" placeholder="Minimum 8 characters" type="password" />
                         </div>
+                        <?php
+                        User::showError("fields");
+                        User::showError("password_length");
+                        User::showError("passwords_match");
+                        User::showError("password");
+                        ?>
                     </div>
                     <div>
                         <label class="block text-sm font-medium leading-6 text-[#0d121b] dark:text-gray-200 mb-2" for="confirm_password">Confirm Password</label>
                         <div class="relative">
                             <input class="block w-full rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-[#1A2230] py-3 px-4 text-[#0d121b] dark:text-white placeholder:text-[#4c669a] dark:placeholder:text-gray-500 focus:border-primary focus:ring-1 focus:ring-primary sm:text-base outline-none transition-colors" id="confirm_password" name="confirm_password" placeholder="Re-enter password" type="password" />
                         </div>
+                        <?php
+                        User::showError("fields");
+                        User::showError("password_length");
+                        User::showError("passwords_match");
+                        User::showError("password");
+                        ?>
                     </div>
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <input class="h-4 w-4 rounded border-[#cfd7e7] text-primary focus:ring-primary bg-white dark:bg-background-dark dark:border-gray-600" id="terms" name="terms" type="checkbox" />
+                            <input class="h-4 w-4 rounded border-[#cfd7e7] text-primary focus:ring-primary bg-white dark:bg-background-dark dark:border-gray-600" id="terms" name="accept_terms" type="checkbox" />
                             <label class="ml-2 block text-sm text-[#4c669a]" for="terms">I agree to the <a class="font-medium text-primary hover:text-primary/80" href="#">Terms</a> and <a class="font-medium text-primary hover:text-primary/80" href="#">Privacy Policy</a></label>
                         </div>
+                        <?php
+                        User::showError("database");
+                        User::showError("accept_terms");
+                        ?>
                     </div>
                     <div>
                         <button class="flex w-full justify-center rounded-lg bg-primary px-3 py-3.5 text-sm font-bold leading-6 text-white shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all" type="submit">
@@ -114,3 +143,7 @@
 </body>
 
 </html>
+
+<?php 
+unset($_SESSION['errors']);
+?>
