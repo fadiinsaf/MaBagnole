@@ -1,3 +1,23 @@
+<?php
+require_once __DIR__ . "/../Database/Database.php";
+require_once __DIR__ . "/../Models/Admin.php";
+require_once __DIR__ . "/../Models/Client.php";
+require_once __DIR__ . "/../Models/Category.php";
+require_once __DIR__ . "/../Models/User.php";
+require_once __DIR__ . "/../Middlewares/IsAuthed.php";
+require_once __DIR__ . "/../Middlewares/IsAdmin.php";
+
+session_start();
+
+IsAuthed::handle();
+IsAdmin::handle();
+
+$admin = $_SESSION["user"];
+$categories = Category::getAllCategories();
+$count = Category::getCarsCountInCategories();
+
+?>
+
 <!DOCTYPE html>
 <html class="light" lang="en">
 
@@ -38,20 +58,8 @@
         <?php require_once __DIR__ . "/../Components/aside.php" ?>
 
         <div class="flex flex-1 flex-col overflow-hidden relative">
-            <header
-                class="flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white px-6 dark:border-slate-800 dark:bg-[#151b2b]">
-                <button class="mr-4 text-slate-500 hover:text-slate-700 md:hidden">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
-                <div class="flex items-center gap-4 ml-auto">
-                    <div class="flex items-center gap-3">
-                        <div class="hidden text-right md:block">
-                            <p class="text-sm font-medium text-slate-900 dark:text-white">Admin User</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Super Admin</p>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <?php require_once __DIR__ . "/../Components/headerDashBoard.php" ?>
+
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-background-light dark:bg-background-dark p-6">
 
                 <div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -68,8 +76,10 @@
                         </button>
                     </div>
                 </div>
+
                 <div
-                    class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-[#151b2b]">
+                    
+                class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-[#151b2b]">
                     <div
                         class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-700 gap-4">
                         <h3 class="text-lg font-semibold text-slate-900 dark:text-white">All Categories</h3>
@@ -97,6 +107,7 @@
                         </div>
                     </div>
                     <div class="overflow-x-auto">
+
                         <table class="w-full text-left text-sm">
                             <thead
                                 class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800 dark:text-slate-400">
@@ -107,133 +118,53 @@
                                     <th class="px-6 py-3 font-semibold text-right">Actions</th>
                                 </tr>
                             </thead>
+
                             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-6 py-4">
-                                        <div>
-                                            <p class="font-medium text-slate-900 dark:text-white">Electric &amp; Hybrid
-                                            </p>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-600 dark:text-slate-400">Eco-friendly options</td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">12 vehicles</td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1">
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-700 dark:hover:text-white transition-colors"
-                                                title="Edit Category">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
-                                                title="Delete Category">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-6 py-4">
-                                        <div>
-                                            <p class="font-medium text-slate-900 dark:text-white">SUV</p>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-600 dark:text-slate-400">Sport Utility Vehicles</td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">8 vehicles</td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1">
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-700 dark:hover:text-white transition-colors"
-                                                title="Edit Category">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
-                                                title="Delete Category">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-6 py-4">
-                                        <div>
-                                            <p class="font-medium text-slate-900 dark:text-white">Compact</p>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-600 dark:text-slate-400">Small and easy to park</td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">15 vehicles</td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1">
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-700 dark:hover:text-white transition-colors"
-                                                title="Edit Category">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
-                                                title="Delete Category">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-6 py-4">
-                                        <div>
-                                            <p class="font-medium text-slate-900 dark:text-white">Economy</p>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-600 dark:text-slate-400">Budget friendly choices
-                                    </td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">20 vehicles</td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1">
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-700 dark:hover:text-white transition-colors"
-                                                title="Edit Category">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
-                                                title="Delete Category">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-6 py-4">
-                                        <div>
-                                            <p class="font-medium text-slate-900 dark:text-white">Premium</p>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-slate-600 dark:text-slate-400">Luxury and high performance
-                                    </td>
-                                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">6 vehicles</td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1">
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-700 dark:hover:text-white transition-colors"
-                                                title="Edit Category">
-                                                <span class="material-symbols-outlined !text-[20px]">edit</span>
-                                            </button>
-                                            <button
-                                                class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
-                                                title="Delete Category">
-                                                <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                
+                                <?php foreach($categories as $category):?>
+                                    <form action="editCategory.php" method="post">
+                                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                            <td class="px-6 py-4">
+                                                <div>
+                                                    <p class="font-medium text-slate-900 dark:text-white"><?= $category["name"] ?>
+                                                    <input type="hidden" value="<?= $category["name"] ?>" name="name">
+                                                    </p>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-600 dark:text-slate-400"><?= $category["description"] ?></td>
+                                            <input type="hidden" value="<?= $category["description"] ?>" name="description">
+                                            <input type="hidden" value="<?= $category["id"] ?>" name="id">
+
+                                            <td class="px-6 py-4 font-medium text-slate-900 dark:text-white"><?= $count[$category["name"]] ?> vehicles</td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="flex items-center justify-end gap-1">
+                                                    
+                                                    <button type="submit"
+                                                        class="rounded p-2 text-slate-400 hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-700 dark:hover:text-white transition-colors"
+                                                        title="Edit Category">
+                                                        <span class="material-symbols-outlined !text-[20px]">edit</span>
+                                                    </button>
+                                                
+                                                    <a href="../Controllers/delete_category.php?id=<?= $category["id"] ?>"
+                                                        class="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 transition-colors"
+                                                        title="Delete Category">
+                                                        <span class="material-symbols-outlined !text-[20px]">delete</span>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </form>
+                                <?php endforeach;?>
+
                             </tbody>
                         </table>
+
                     </div>
                     <div
                         class="flex items-center justify-between border-t border-slate-200 bg-white px-6 py-4 dark:border-slate-700 dark:bg-[#151b2b]">
                         <div class="text-sm text-slate-500 dark:text-slate-400">
                             Showing <span class="font-medium text-slate-900 dark:text-white">1-5</span> of <span
-                                class="font-medium text-slate-900 dark:text-white">8</span> categories
+                                class="font-medium text-slate-900 dark:text-white"><?= count($categories) ?></span> categories
                         </div>
                         <div class="flex gap-2">
                             <button
@@ -248,7 +179,9 @@
                         </div>
                     </div>
                 </div>
+
             </main>
+
         </div>
     </div>
 
@@ -270,7 +203,7 @@
                 </div>
 
                 <!-- Form Container -->
-                <form id="categoryForm" class="p-6">
+                <form id="categoryForm" class="p-6" method="POST" action="../Controllers/add_category.php">
                     <div id="categoryFormsContainer">
                         <!-- Category forms will be dynamically added here -->
                         <div class="category-form mb-6 p-4 border border-slate-200 rounded-lg dark:border-slate-700">
@@ -323,6 +256,7 @@
                         </div>
                     </div>
                 </form>
+                
             </div>
         </div>
     </div>
@@ -413,53 +347,14 @@
 
         // Handle form submission
         document.getElementById('categoryForm').addEventListener('submit', function (e) {
-            e.preventDefault();
 
-            const formData = new FormData(this);
-            const names = formData.getAll('name[]');
-            const descriptions = formData.getAll('description[]');
 
             // Process each category
-            for (let i = 0; i < names.length; i++) {
-                const categoryData = {
-                    name: names[i],
-                    description: descriptions[i]
-                };
-
-                // Here you would normally send this data to your backend
-                console.log('Category data to save:', categoryData);
-
-                // You would typically make an AJAX request here:
-                /*
-                fetch('/api/categories', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(categoryData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                    // Add the new category to the table
-                    addCategoryToTable(categoryData);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-                */
-            }
-
             // Show success message
             alert(`Successfully added ${names.length} category(s) to the system!`);
-
-            // Reset form and close modal
-            this.reset();
             closeCategoryModal();
 
             // Reset to one form
-            const container = document.getElementById('categoryFormsContainer');
-            const forms = container.querySelectorAll('.category-form');
             for (let i = 1; i < forms.length; i++) {
                 forms[i].remove();
             }
