@@ -1,3 +1,8 @@
+<?php 
+    session_start();
+    require_once __DIR__ . "/Models/User.php";
+?>
+
 <!DOCTYPE html>
 
 <html class="light" lang="en">
@@ -65,25 +70,31 @@
                     <h1 class="text-[#0d121b] dark:text-white text-3xl font-bold leading-tight mb-2">Welcome back</h1>
                     <p class="text-[#4c669a] dark:text-[#94a3b8] text-sm">Please enter your details to access your account.</p>
                 </div>
-                <form class="flex flex-col gap-5">
+                <form class="flex flex-col gap-5" action="/../Controllers/auth.php" method="POST">
 
                     <div class="flex flex-col gap-2">
                         <label class="text-[#0d121b] dark:text-gray-200 text-sm font-medium">Email Address</label>
                         <div class="relative">
-                            <input class="w-full rounded-lg border border-[#cfd7e7] dark:border-[#4a5568] bg-[#f8f9fc] dark:bg-[#2d3748] text-[#0d121b] dark:text-white h-12 px-4 pl-11 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-[#4c669a] dark:placeholder:text-[#718096]" placeholder="john@example.com" type="email" />
+                            <input name="email" class="w-full rounded-lg border border-[#cfd7e7] dark:border-[#4a5568] bg-[#f8f9fc] dark:bg-[#2d3748] text-[#0d121b] dark:text-white h-12 px-4 pl-11 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-[#4c669a] dark:placeholder:text-[#718096]" placeholder="john@example.com" type="email" />
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#4c669a] dark:text-[#718096] text-xl select-none">mail</span>
                         </div>
+                            <?php 
+                            User::showError("fields");
+                            User::showError("email");
+                            User::showError("password");?>
                     </div>
 
                     <div class="flex flex-col gap-2">
                         <div class="flex justify-between items-center">
                             <label class="text-[#0d121b] dark:text-gray-200 text-sm font-medium">Password</label>
-                            <a class="text-primary text-xs font-medium hover:underline" href="#">Forgot Password?</a>
                         </div>
                         <div class="relative group">
-                            <input class="w-full rounded-lg border border-[#cfd7e7] dark:border-[#4a5568] bg-[#f8f9fc] dark:bg-[#2d3748] text-[#0d121b] dark:text-white h-12 px-4 pl-11 pr-11 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-[#4c669a] dark:placeholder:text-[#718096]" placeholder="••••••••" type="password" />
+                            <input name="password" class="w-full rounded-lg border border-[#cfd7e7] dark:border-[#4a5568] bg-[#f8f9fc] dark:bg-[#2d3748] text-[#0d121b] dark:text-white h-12 px-4 pl-11 pr-11 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-[#4c669a] dark:placeholder:text-[#718096]" placeholder="••••••••" type="password" />
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#4c669a] dark:text-[#718096] text-xl select-none">lock</span>
                         </div>
+                    <?php 
+                            User::showError("fields");
+                            ?>
                     </div>
 
                     <div class="flex items-center gap-3 pt-2">
@@ -114,15 +125,15 @@
                             <span class="material-symbols-outlined text-yellow-400 text-sm">star</span>
                             <span class="material-symbols-outlined text-yellow-400 text-sm">star</span>
                         </div>
-                        <p class="text-2xl font-bold leading-tight mb-2">"MaBagnole made renting a car easier than ever. Highly recommended for business trips!"</p>
+                        <p class="text-2xl font-bold leading-tight mb-2">MaBagnole made renting a car easier than ever. Highly recommended for business trips!</p>
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="size-10 rounded-full bg-white/20 overflow-hidden backdrop-blur-sm">
-                            <img alt="Professional woman smiling" class="h-full w-full object-cover" data-alt="Portrait of a smiling professional woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvmO1dbMLmuifUodAce19ymjKdSVNIL6GTFd-OaUsYRGNtUvKNxBbe5y0ActUb3TVsamAqKXFGrStp5jbPLBxoglAQxgSW3zRBBreaWlG94K-6jO2Y0EG9bxJBjwfVGFgcEdUAAh29nDDV7Udc3Fa25gcJ7If4eoL72P4ZI2I46gYYN4iQeuAftfLOiz0nibl0t_pZmyOzN4N8q8FGAUsl43KZ_JDP2pqwBOZzL5Qk-j8RnG7tpZZGeoEfcv3Iq4LRFIA07M50mkk" />
+                            <img alt="Professional woman smiling" class="h-full w-full object-cover" data-alt="FADI INSAF" src="https://avatars.githubusercontent.com/u/229927291?v=4" />
                         </div>
                         <div>
-                            <p class="font-semibold text-sm">Sophie Martin</p>
-                            <p class="text-xs text-gray-300">Product Manager at TechFlow</p>
+                            <p class="font-semibold text-sm">Fadi Insaf</p>
+                            <p class="text-xs text-gray-300">Product Manager</p>
                         </div>
                     </div>
                 </div>
@@ -140,3 +151,7 @@
 </body>
 
 </html>
+
+<?php 
+unset($_SESSION['errors']);
+?>
