@@ -1,3 +1,20 @@
+<?php
+require_once __DIR__ . "/../Database/Database.php";
+require_once __DIR__ . "/../Models/Admin.php";
+require_once __DIR__ . "/../Models/Client.php";
+require_once __DIR__ . "/../Models/Car.php";
+require_once __DIR__ . "/../Models/User.php";
+require_once __DIR__ . "/../Middlewares/IsAuthed.php";
+require_once __DIR__ . "/../Middlewares/IsClient.php";
+
+session_start();
+
+IsAuthed::handle();
+IsClient::handle();
+$cars = Car::getAllCars(3);
+
+?>
+
 <!DOCTYPE html>
 
 <html class="light" lang="en">
@@ -80,61 +97,65 @@
                         <p class="text-lg md:text-xl text-slate-200 font-medium mb-8 max-w-xl drop-shadow-sm">
                             Premium cars at affordable daily rates. Transparent pricing with absolutely no hidden fees.
                         </p>
-                        <button
+                        <a href="/Views/fleet.php"
                             class="inline-flex items-center justify-center h-12 px-8 text-base font-bold text-white bg-primary rounded-lg hover:bg-blue-700 transition-all shadow-lg shadow-blue-900/20">
                             Explore Cars
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- Search Widget (Floating) -->
+
     <div class="relative w-full -mt-8 mb-12 z-20 px-4 sm:px-6 lg:px-8">
-        <div
-            class="max-w-[1100px] mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 p-4 md:p-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                <div class="flex flex-col gap-1.5">
-                    <label
-                        class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Location</label>
-                    <div class="relative">
-                        <span
-                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">location_on</span>
-                        <input
-                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                            placeholder="Pick-up city or airport" type="text" />
+        <form action="searchResult.php" method="GET">
+            <div
+                class="max-w-[1100px] mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 p-4 md:p-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div class="flex flex-col gap-1.5">
+                        <label
+                            class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">model</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">category</span>
+                            <input required
+                                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                placeholder="Corrola v8" type="text" name="model" />
+                        </div>
                     </div>
-                </div>
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Pick-up
-                        Date</label>
-                    <div class="relative">
-                        <span
-                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">calendar_today</span>
-                        <input
-                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                            type="date" />
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Pick-up
+                            Date</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">calendar_today</span>
+                            <input required
+                                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                type="date" />
+                        </div>
                     </div>
-                </div>
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Return
-                        Date</label>
-                    <div class="relative">
-                        <span
-                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">event</span>
-                        <input
-                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                            type="date" />
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Return
+                            Date</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">event</span>
+                            <input required
+                                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                type="date" />
+                        </div>
                     </div>
+                    <button
+                        class="w-full h-[42px] bg-primary hover:bg-blue-700 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-md shadow-blue-500/20">
+                        <span class="material-symbols-outlined">search</span>
+                        Find a Car
+                    </button>
                 </div>
-                <button
-                    class="w-full h-[42px] bg-primary hover:bg-blue-700 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-md shadow-blue-500/20">
-                    <span class="material-symbols-outlined">search</span>
-                    Find a Car
-                </button>
             </div>
-        </div>
+        </form>
     </div>
+
     <!-- How it Works Section -->
     <div class="w-full py-16 bg-white dark:bg-slate-900">
         <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -180,126 +201,53 @@
             </div>
         </div>
     </div>
+
     <!-- Featured Fleet Section -->
     <div class="w-full py-16 bg-background-light dark:bg-background-dark">
         <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between mb-8">
                 <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Popular Rentals</h2>
-                <a class="text-primary font-semibold hover:underline flex items-center gap-1" href="#">
+                <a class="text-primary font-semibold hover:underline flex items-center gap-1" href="/Views/fleet.php">
                     View All
                     <span class="material-symbols-outlined text-sm">arrow_forward</span>
                 </a>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Card 1: Tesla -->
-                <div
-                    class="group flex flex-col bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                    <div class="aspect-video bg-cover bg-center"
-                        data-alt="White Tesla Model 3 parked in a modern setting"
-                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAVwWyBwoacBjReVqc4t5yiJE_4zd0fNcvjVjZOcM4IA8S4k6G-48hws14pmV7FfTCnT4ra18QbLOBq6oAq9AZfxN_CGMk4nbB08nKLNaFOeZdAPX5NWZjZ7_KHjsd0d-F0JMgktnDU-5Kemen6KMGIGPGY12hcCq6yvk7rPG74cZczHbuQFrEQAM97M_N5KS4JHPyIWxB_UdnntxaJuFRDt0UPRD6jYpt7Kg45zV9SuaMe8JMvs-Sp2muBbMhIAphHD-AGOjd8_ns");'>
-                    </div>
-                    <div class="p-5 flex flex-col flex-1">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Tesla Model 3</h3>
-                            <span
-                                class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold px-2 py-1 rounded">Electric</span>
+
+                <!-- Cards -->
+                 <?php foreach($cars as $car):?>
+                    <div
+                        class="group flex flex-col bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                        <div class="aspect-video bg-cover bg-center"
+                            data-alt="White Tesla Model 3 parked in a modern setting"
+                            style='background-image: url("<?= $car["image"] ?>");'>
                         </div>
-                        <div class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-4">
-                            <div class="flex items-center gap-1">
-                                <span class="material-symbols-outlined text-base">settings</span> Auto
+                        <div class="p-5 flex flex-col flex-1">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white"><?= $car["model"] ?></h3>
+                                <span
+                                    class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold px-2 py-1 rounded"><?= $car["name"] ?></span>
                             </div>
-                            <div class="flex items-center gap-1">
-                                <span class="material-symbols-outlined text-base">person</span> 5 Seats
+                            <div class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-4">
+                                <div class="flex items-center gap-1">
+                                    <?= $car["car_description"] ?>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-1">
-                                <span class="material-symbols-outlined text-base">speed</span> Fast
+                            <div
+                                class="mt-auto flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-700">
+                                <div>
+                                    <span class="text-xl font-bold text-slate-900 dark:text-white"><?= $car["pricePerDay"] ?> DH</span>
+                                    <span class="text-slate-500 dark:text-slate-400 text-sm">/day</span>
+                                </div>
+                                <a href="carDetails.php?id=<?= $car["car_id"] ?>"
+                                    class="bg-primary hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded-lg transition-colors">
+                                    Rent Now
+                                </a>
                             </div>
-                        </div>
-                        <div
-                            class="mt-auto flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-700">
-                            <div>
-                                <span class="text-xl font-bold text-slate-900 dark:text-white">$89</span>
-                                <span class="text-slate-500 dark:text-slate-400 text-sm">/day</span>
-                            </div>
-                            <button
-                                class="bg-primary hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded-lg transition-colors">
-                                Rent Now
-                            </button>
                         </div>
                     </div>
-                </div>
-                <!-- Card 2: BMW -->
-                <div
-                    class="group flex flex-col bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                    <div class="aspect-video bg-cover bg-center" data-alt="Black BMW 3 Series sedan front angle view"
-                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCo3JTHNF7YDcgobTFbsy40AdZvf6ieocQowXKxK6ZCSERaK2Y4HD4-doAA_bNPrc1QjGXfDR7ebQqUlY3Cu8pv0dl6iKZmY3MmYh5sIwdDaGEx1mkH5eiNvgUnzNMdHHP-WlszKz-EYcQPhvXx5YEP-eeLgiijxDqwPcLoYkO3CJSgVX2ky4LS-xzH5S0SwqIS3liq2XeG6XsBNL2iYwzPFZiLmb9r3c64wTXamg2x831R1egMASrnOLXfk97VTCh-WkQtogSEUg4");'>
-                    </div>
-                    <div class="p-5 flex flex-col flex-1">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">BMW 3 Series</h3>
-                            <span
-                                class="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-bold px-2 py-1 rounded">Hybrid</span>
-                        </div>
-                        <div class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-4">
-                            <div class="flex items-center gap-1">
-                                <span class="material-symbols-outlined text-base">settings</span> Auto
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <span class="material-symbols-outlined text-base">person</span> 5 Seats
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <span class="material-symbols-outlined text-base">local_gas_station</span> Hybrid
-                            </div>
-                        </div>
-                        <div
-                            class="mt-auto flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-700">
-                            <div>
-                                <span class="text-xl font-bold text-slate-900 dark:text-white">$75</span>
-                                <span class="text-slate-500 dark:text-slate-400 text-sm">/day</span>
-                            </div>
-                            <button
-                                class="bg-primary hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded-lg transition-colors">
-                                Rent Now
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Card 3: SUV -->
-                <div
-                    class="group flex flex-col bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                    <div class="aspect-video bg-cover bg-center" data-alt="Silver Toyota SUV off-road capable vehicle"
-                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD9VP3wjY8mE52YNFOzUshcuXCpJRtqL0J7-eiVnybZZP0-HC9x6eBDM3vJwII49m39YQBvmfXxV8ldkvSNgNzxmDGsJ4Cwre0-Rjn5BLVsHDB9iMnymXbI4eCY_zd29d9PO7Znddxvj4hbb-50mbFEmr3J_vtoj-qbDFJIkPHNuScuqmc6pj_vrHGQCULvFtQGgriu2Zrrczt3j5h3W69a29RrlGi8HbxOe5xrwORGdqdlp3ZP1VB_WHAqOL3jIm0hPj6P1O0Xf3Q");'>
-                    </div>
-                    <div class="p-5 flex flex-col flex-1">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Toyota RAV4</h3>
-                            <span
-                                class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold px-2 py-1 rounded">Gasoline</span>
-                        </div>
-                        <div class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-4">
-                            <div class="flex items-center gap-1">
-                                <span class="material-symbols-outlined text-base">settings</span> Auto
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <span class="material-symbols-outlined text-base">person</span> 5 Seats
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <span class="material-symbols-outlined text-base">luggage</span> Large
-                            </div>
-                        </div>
-                        <div
-                            class="mt-auto flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-700">
-                            <div>
-                                <span class="text-xl font-bold text-slate-900 dark:text-white">$65</span>
-                                <span class="text-slate-500 dark:text-slate-400 text-sm">/day</span>
-                            </div>
-                            <button
-                                class="bg-primary hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded-lg transition-colors">
-                                Rent Now
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                 <?php endforeach;?>
+
             </div>
         </div>
     </div>
